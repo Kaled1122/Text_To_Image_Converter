@@ -6,55 +6,112 @@
   <title>Text2Image Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(180deg, #f5f5f7 0%, #eaeaea 100%);
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    :root {
+      --apple-gray: #f5f5f7;
+      --apple-border: #d2d2d7;
+      --apple-blue: #0071e3;
     }
-    .glass {
-      background: rgba(255, 255, 255, 0.6);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+    body {
+      background: var(--apple-gray);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      color: #1d1d1f;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .mac-window {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(40px);
+      border: 1px solid var(--apple-border);
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      max-width: 700px;
+      width: 100%;
+      overflow: hidden;
+    }
+    .mac-topbar {
+      height: 32px;
+      background: #e9e9eb;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--apple-border);
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .dot.red { background: #ff605c; }
+    .dot.yellow { background: #ffbd44; }
+    .dot.green { background: #00ca4e; }
+    .mac-content {
+      padding: 2rem 2.5rem;
     }
     .btn-primary {
-      background: linear-gradient(90deg, #007aff, #0051ff);
-      box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
-      transition: all 0.2s ease;
+      background: var(--apple-blue);
+      color: white;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
     }
     .btn-primary:hover {
       transform: scale(1.03);
-      box-shadow: 0 6px 18px rgba(0, 122, 255, 0.4);
+      box-shadow: 0 6px 18px rgba(0, 113, 227, 0.35);
+    }
+    textarea {
+      border: 1px solid var(--apple-border);
+      border-radius: 12px;
+      resize: none;
+      font-size: 1rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.85);
+      color: #1d1d1f;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+    textarea:focus {
+      border: 1px solid var(--apple-blue);
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
     }
   </style>
 </head>
 
-<body class="flex flex-col items-center justify-center min-h-screen px-4">
-  <div class="glass p-8 rounded-3xl shadow-xl max-w-2xl w-full text-center">
-    <h1 class="text-4xl font-semibold text-gray-900 mb-3">Text2Image Studio</h1>
-    <p class="text-gray-600 mb-8 text-lg">Transform your words into breathtaking visuals — instantly.</p>
-
-    <textarea id="prompt"
-      class="w-full border border-gray-300 rounded-2xl p-4 mb-6 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      rows="3"
-      placeholder="Describe your image idea..."></textarea>
-
-    <button id="generateBtn"
-      class="btn-primary text-white font-semibold py-3 px-6 rounded-2xl w-full text-lg">
-      Generate Image
-    </button>
-
-    <div id="loading" class="hidden mt-6 text-gray-500 animate-pulse text-lg">
-      ⏳ Crafting your masterpiece...
+<body>
+  <div class="mac-window">
+    <div class="mac-topbar">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
     </div>
 
-    <div id="output" class="mt-8 hidden">
-      <img id="image" class="rounded-2xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
-      <a id="download" class="text-blue-600 underline block mt-2 text-lg" target="_blank">Download Image</a>
+    <div class="mac-content text-center">
+      <h1 class="text-3xl font-semibold mb-2">Text2Image Studio</h1>
+      <p class="text-gray-600 mb-8">Describe. Generate. Visualize — beautifully.</p>
+
+      <textarea id="prompt" rows="3" class="w-full mb-5" placeholder="Describe your image idea..."></textarea>
+
+      <button id="generateBtn" class="btn-primary w-full mb-6">Generate Image</button>
+
+      <div id="loading" class="hidden text-gray-500 text-lg animate-pulse mb-6">
+        ⏳ Creating your image...
+      </div>
+
+      <div id="output" class="hidden">
+        <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
+        <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
+      </div>
     </div>
   </div>
 
-  <footer class="mt-10 text-gray-400 text-sm text-center">
-    © 2025 Text2Image Studio · Powered by OpenAI · Hosted on Vercel & Railway<br>
-    <span class="text-gray-500">Made by <strong>Kaled Alenezi</strong></span>
+  <footer class="mt-8 text-gray-500 text-sm text-center">
+    Made by <strong>Kaled Alenezi</strong>
   </footer>
 
   <script>
@@ -78,7 +135,6 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt }),
         });
-
         const data = await res.json();
 
         if (data.image_url) {
