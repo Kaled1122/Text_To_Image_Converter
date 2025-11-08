@@ -3,18 +3,16 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 
-# ---------------------------------------------------------
-# SETUP
-# ---------------------------------------------------------
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Use your real API key
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Load key
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key or not api_key.startswith("sk-"):
+    raise ValueError("❌ OPENAI_API_KEY missing or invalid.")
 
-# ---------------------------------------------------------
-# ROUTES
-# ---------------------------------------------------------
+client = OpenAI(api_key=api_key)
+
 @app.route("/")
 def home():
     return jsonify({"message": "✅ Text2Image Studio backend is running."})
@@ -22,13 +20,11 @@ def home():
 @app.route("/generate", methods=["POST"])
 def generate_image():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         prompt = data.get("prompt", "").strip()
-
         if not prompt:
             return jsonify({"error": {"message": "No prompt provided."}}), 400
 
-        # Generate image
         result = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
@@ -39,6 +35,7 @@ def generate_image():
         return jsonify({"image_url": image_url})
 
     except Exception as e:
+        # Capture and return any OpenAI or Python errors
         return jsonify({"error": {"message": str(e)}}), 500
 
 
