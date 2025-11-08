@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Text-to-Image Generator</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+
+  <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-lg">
+    <h1 class="text-2xl font-bold text-center mb-4">🖼️ AI Text-to-Image Generator</h1>
+
+    <textarea id="prompt" class="w-full border p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" placeholder="Describe your image idea..."></textarea>
+
+    <button id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg">
+      Generate Image
+    </button>
+
+    <div id="loading" class="hidden mt-4 text-center text-gray-500">⏳ Generating image...</div>
+
+    <div id="output" class="mt-6 hidden text-center">
+      <img id="image" class="rounded-xl mx-auto shadow-lg" alt="Generated image" />
+      <a id="download" class="text-blue-600 underline block mt-2" target="_blank">Download Image</a>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = "https://YOUR-BACKEND-URL.onrender.com"; // 👈 replace with your backend domain
+
+    const btn = document.getElementById("generateBtn");
+    const promptInput = document.getElementById("prompt");
+    const loading = document.getElementById("loading");
+    const output = document.getElementById("output");
+    const img = document.getElementById("image");
+    const download = document.getElementById("download");
+
+    btn.addEventListener("click", async () => {
+      const prompt = promptInput.value.trim();
+      if (!prompt) return alert("Please enter a prompt!");
+      loading.classList.remove("hidden");
+      output.classList.add("hidden");
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/generate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+        const data = await res.json();
+
+        if (data.image_url) {
+          img.src = data.image_url;
+          download.href = data.image_url;
+          loading.classList.add("hidden");
+          output.classList.remove("hidden");
+        } else {
+          alert("Error: " + (data.error || "Failed to generate image"));
+        }
+      } catch (err) {
+        alert("Request failed: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
