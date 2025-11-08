@@ -15,25 +15,31 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
-      padding: 2rem;
+      padding: 3rem 1rem;
     }
 
     h1 {
       font-size: 3rem;
       font-weight: 600;
       letter-spacing: -0.5px;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
     }
 
     .box {
       background: white;
-      border-radius: 18px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-      padding: 2.5rem;
+      border-radius: 22px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      padding: 3rem 2.5rem;
       width: 100%;
-      max-width: 600px;
+      max-width: 620px;
       text-align: center;
+    }
+
+    p {
+      color: #515154;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
     }
 
     textarea {
@@ -46,7 +52,7 @@
       background: #fafafa;
       color: #1d1d1f;
       outline: none;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
       transition: border 0.2s ease;
     }
 
@@ -61,20 +67,36 @@
       font-weight: 500;
       border: none;
       border-radius: 12px;
-      padding: 0.75rem 1.5rem;
+      padding: 0.9rem 1.5rem;
       cursor: pointer;
       width: 100%;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+      font-size: 1.1rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 6px 18px rgba(0, 113, 227, 0.25);
     }
 
     button:hover {
       transform: scale(1.03);
-      box-shadow: 0 6px 18px rgba(0, 113, 227, 0.35);
+      box-shadow: 0 8px 24px rgba(0, 113, 227, 0.35);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(0, 113, 227, 0.3);
+      border-top-color: #0071e3;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
     footer {
-      margin-top: 2rem;
+      margin-top: 2.5rem;
       font-size: 0.9rem;
       color: #777;
       text-align: center;
@@ -86,16 +108,17 @@
   <h1>Text2Image Studio</h1>
 
   <div class="box">
-    <p class="text-gray-600 mb-6 text-lg">Turn your imagination into a visual masterpiece.</p>
+    <p>Turn your imagination into a visual masterpiece.</p>
 
     <textarea id="prompt" rows="3" placeholder="Describe your image idea..."></textarea>
     <button id="generateBtn">Generate Image</button>
 
-    <div id="loading" class="hidden text-gray-500 text-lg animate-pulse mt-6">
-      ⏳ Creating your image...
+    <div id="loading" class="hidden mt-8 text-gray-600 text-lg">
+      <div class="spinner mx-auto mb-3"></div>
+      <p>Generating your image...</p>
     </div>
 
-    <div id="output" class="hidden mt-6">
+    <div id="output" class="hidden mt-8">
       <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
       <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
     </div>
