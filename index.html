@@ -6,7 +6,6 @@
   <title>Text2Image Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
   <style>
-    /* ---------------------- CORE THEME ---------------------- */
     body {
       background: linear-gradient(180deg, #f9f9fa 0%, #f2f2f5 100%);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -18,7 +17,6 @@
       min-height: 100vh;
       margin: 0;
       padding: 3rem 1rem;
-      transition: background 0.3s ease;
     }
 
     h1 {
@@ -29,7 +27,6 @@
       text-align: center;
     }
 
-    /* ---------------------- MAIN BOX ---------------------- */
     .box {
       background: white;
       border-radius: 28px;
@@ -38,12 +35,6 @@
       width: 100%;
       max-width: 640px;
       text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    .box:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.1);
     }
 
     p {
@@ -71,7 +62,6 @@
       box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
     }
 
-    /* ---------------------- BUTTON ---------------------- */
     button {
       background: #0071e3;
       color: white;
@@ -91,10 +81,10 @@
       box-shadow: 0 8px 26px rgba(0, 113, 227, 0.35);
     }
 
-    /* ---------------------- SPINNER ---------------------- */
+    /* Spinner */
     .spinner {
-      width: 34px;
-      height: 34px;
+      width: 40px;
+      height: 40px;
       border: 3px solid rgba(0, 113, 227, 0.25);
       border-top-color: #0071e3;
       border-radius: 50%;
@@ -113,7 +103,19 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ---------------------- FOOTER ---------------------- */
+    /* Image fade-in */
+    #image {
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 0.6s ease, transform 0.5s ease;
+      margin: 0 auto;
+    }
+
+    #image.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
     footer {
       margin-top: 3rem;
       font-size: 0.9rem;
@@ -121,7 +123,7 @@
       text-align: center;
     }
 
-    /* ---------------------- MODAL ---------------------- */
+    /* Modal for error */
     .modal {
       display: none;
       position: fixed;
@@ -169,18 +171,6 @@
       from { opacity: 0; transform: scale(0.96); }
       to { opacity: 1; transform: scale(1); }
     }
-
-    /* ---------------------- IMAGE ---------------------- */
-    #image {
-      opacity: 0;
-      transform: scale(0.97);
-      transition: opacity 0.6s ease, transform 0.5s ease;
-    }
-
-    #image.visible {
-      opacity: 1;
-      transform: scale(1);
-    }
   </style>
 </head>
 
@@ -193,13 +183,15 @@
     <textarea id="prompt" rows="3" placeholder="Describe your image idea..."></textarea>
     <button id="generateBtn">Generate Image</button>
 
-    <div id="loading" class="hidden mt-8 flex flex-col items-center justify-center">
-      <div class="spinner mb-3" id="spinner"></div>
-      <p class="text-gray-600 text-lg">Generating your image...</p>
+    <!-- Centered Spinner and Text -->
+    <div id="loading" class="hidden flex flex-col items-center justify-center mt-10">
+      <div class="spinner mb-4" id="spinner"></div>
+      <p class="text-gray-600 text-lg text-center">Generating your image...</p>
     </div>
 
-    <div id="output" class="hidden mt-8">
-      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full" alt="Generated image" />
+    <!-- Centered Image Output -->
+    <div id="output" class="hidden flex flex-col items-center justify-center mt-10">
+      <img id="image" class="rounded-xl shadow-lg mb-4 max-w-full" alt="Generated image" />
       <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
     </div>
   </div>
@@ -236,7 +228,7 @@
       modal.style.display = "none";
     }
 
-    // Main logic
+    // Generate
     btn.addEventListener("click", async () => {
       const prompt = promptInput.value.trim();
       if (!prompt) return showModal("Please describe your image idea before generating.");
@@ -244,6 +236,7 @@
       loading.classList.remove("hidden");
       spinner.classList.add("show");
       output.classList.add("hidden");
+      img.classList.remove("visible");
 
       try {
         const res = await fetch(`${BACKEND_URL}/generate`, {
@@ -259,8 +252,8 @@
           img.onload = () => img.classList.add("visible");
           download.href = data.image_url;
           download.textContent = "Download Image";
-          loading.classList.add("hidden");
           spinner.classList.remove("show");
+          loading.classList.add("hidden");
           output.classList.remove("hidden");
         } else {
           spinner.classList.remove("show");
