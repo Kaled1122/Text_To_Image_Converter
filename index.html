@@ -6,6 +6,7 @@
   <title>Text2Image Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    /* ---------------------- CORE THEME ---------------------- */
     body {
       background: linear-gradient(180deg, #f9f9fa 0%, #f2f2f5 100%);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
@@ -15,37 +16,40 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 4rem 1rem;
+      margin: 0;
+      padding: 3rem 1rem;
+      transition: background 0.3s ease;
     }
 
     h1 {
-      font-size: 3.25rem;
+      font-size: 3rem;
       font-weight: 600;
-      letter-spacing: -0.5px;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
+      letter-spacing: -0.4px;
       text-align: center;
     }
 
+    /* ---------------------- MAIN BOX ---------------------- */
     .box {
       background: white;
-      border-radius: 26px;
-      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.06);
+      border-radius: 28px;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.08);
       padding: 3.5rem 3rem;
       width: 100%;
       max-width: 640px;
       text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.3s ease;
     }
 
     .box:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.08);
+      transform: translateY(-3px);
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.1);
     }
 
     p {
       color: #515154;
-      margin-bottom: 2.5rem;
       font-size: 1.1rem;
+      margin-bottom: 2rem;
     }
 
     textarea {
@@ -59,7 +63,7 @@
       color: #1d1d1f;
       outline: none;
       margin-bottom: 2rem;
-      transition: border 0.2s ease, box-shadow 0.2s ease;
+      transition: border 0.25s ease, box-shadow 0.25s ease;
     }
 
     textarea:focus {
@@ -67,18 +71,19 @@
       box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
     }
 
+    /* ---------------------- BUTTON ---------------------- */
     button {
       background: #0071e3;
       color: white;
-      font-weight: 500;
       border: none;
       border-radius: 14px;
       padding: 1rem 1.5rem;
-      cursor: pointer;
       width: 100%;
       font-size: 1.1rem;
+      font-weight: 500;
+      cursor: pointer;
       transition: all 0.25s ease;
-      box-shadow: 0 6px 18px rgba(0, 113, 227, 0.25);
+      box-shadow: 0 6px 20px rgba(0, 113, 227, 0.25);
     }
 
     button:hover {
@@ -86,13 +91,14 @@
       box-shadow: 0 8px 26px rgba(0, 113, 227, 0.35);
     }
 
+    /* ---------------------- SPINNER ---------------------- */
     .spinner {
       width: 34px;
       height: 34px;
       border: 3px solid rgba(0, 113, 227, 0.25);
       border-top-color: #0071e3;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+      animation: spin 0.9s linear infinite;
       opacity: 0;
       transform: scale(0.8);
       transition: opacity 0.3s ease, transform 0.3s ease;
@@ -107,32 +113,40 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Modal for friendly errors */
+    /* ---------------------- FOOTER ---------------------- */
+    footer {
+      margin-top: 3rem;
+      font-size: 0.9rem;
+      color: #777;
+      text-align: center;
+    }
+
+    /* ---------------------- MODAL ---------------------- */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.45);
       justify-content: center;
       align-items: center;
       z-index: 50;
+      backdrop-filter: blur(6px);
     }
 
     .modal-content {
       background: white;
-      border-radius: 16px;
-      max-width: 500px;
-      padding: 2rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
       text-align: center;
       animation: fadeIn 0.3s ease;
+      max-width: 480px;
     }
 
     .modal-content h2 {
       font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 1rem;
-      color: #1d1d1f;
+      margin-bottom: 0.75rem;
     }
 
     .modal-content p {
@@ -145,22 +159,27 @@
       background: #0071e3;
       color: white;
       border: none;
-      border-radius: 10px;
-      padding: 0.6rem 1.2rem;
-      cursor: pointer;
+      border-radius: 12px;
+      padding: 0.6rem 1.3rem;
       font-size: 0.95rem;
+      cursor: pointer;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
+      from { opacity: 0; transform: scale(0.96); }
       to { opacity: 1; transform: scale(1); }
     }
 
-    footer {
-      margin-top: 3rem;
-      font-size: 0.9rem;
-      color: #777;
-      text-align: center;
+    /* ---------------------- IMAGE ---------------------- */
+    #image {
+      opacity: 0;
+      transform: scale(0.97);
+      transition: opacity 0.6s ease, transform 0.5s ease;
+    }
+
+    #image.visible {
+      opacity: 1;
+      transform: scale(1);
     }
   </style>
 </head>
@@ -174,13 +193,13 @@
     <textarea id="prompt" rows="3" placeholder="Describe your image idea..."></textarea>
     <button id="generateBtn">Generate Image</button>
 
-    <div id="loading" class="hidden mt-8 text-gray-600 text-lg flex flex-col items-center justify-center">
+    <div id="loading" class="hidden mt-8 flex flex-col items-center justify-center">
       <div class="spinner mb-3" id="spinner"></div>
-      <p id="loadingText">Generating your image...</p>
+      <p class="text-gray-600 text-lg">Generating your image...</p>
     </div>
 
     <div id="output" class="hidden mt-8">
-      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500 opacity-0" alt="Generated image" />
+      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full" alt="Generated image" />
       <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
     </div>
   </div>
@@ -191,7 +210,7 @@
   <div id="errorModal" class="modal">
     <div class="modal-content">
       <h2>⚠️ Error</h2>
-      <p id="errorMessage">An unknown error occurred.</p>
+      <p id="errorMessage">An unexpected error occurred.</p>
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
   </div>
@@ -208,18 +227,19 @@
     const modal = document.getElementById("errorModal");
     const errorMessage = document.getElementById("errorMessage");
 
+    // Error modal
     function showModal(message) {
       errorMessage.textContent = message;
       modal.style.display = "flex";
     }
-
     function closeModal() {
       modal.style.display = "none";
     }
 
+    // Main logic
     btn.addEventListener("click", async () => {
       const prompt = promptInput.value.trim();
-      if (!prompt) return showModal("Please enter a description before generating.");
+      if (!prompt) return showModal("Please describe your image idea before generating.");
 
       loading.classList.remove("hidden");
       spinner.classList.add("show");
@@ -231,15 +251,16 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt }),
         });
+
         const data = await res.json();
 
         if (data.image_url) {
           img.src = data.image_url;
-          img.onload = () => img.classList.add("opacity-100");
+          img.onload = () => img.classList.add("visible");
           download.href = data.image_url;
           download.textContent = "Download Image";
-          spinner.classList.remove("show");
           loading.classList.add("hidden");
+          spinner.classList.remove("show");
           output.classList.remove("hidden");
         } else {
           spinner.classList.remove("show");
