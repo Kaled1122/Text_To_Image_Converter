@@ -3,19 +3,21 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 
+# ---------------------------------------------------------
+# SETUP
+# ---------------------------------------------------------
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Load key
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key or not api_key.startswith("sk-"):
-    raise ValueError("❌ OPENAI_API_KEY missing or invalid.")
+# Load your OpenAI API key from environment variable
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-client = OpenAI(api_key=api_key)
-
+# ---------------------------------------------------------
+# ROUTES
+# ---------------------------------------------------------
 @app.route("/")
 def home():
-    return jsonify({"message": "✅ Text2Image Studio backend is running."})
+    return jsonify({"message": "✅ Text2Image Studio backend is running with DALL·E 3."})
 
 @app.route("/generate", methods=["POST"])
 def generate_image():
@@ -25,8 +27,9 @@ def generate_image():
         if not prompt:
             return jsonify({"error": {"message": "No prompt provided."}}), 400
 
+        # Generate image using DALL·E 3
         result = client.images.generate(
-            model="gpt-image-1",
+            model="dall-e-3",
             prompt=prompt,
             size="1024x1024"
         )
@@ -35,7 +38,6 @@ def generate_image():
         return jsonify({"image_url": image_url})
 
     except Exception as e:
-        # Capture and return any OpenAI or Python errors
         return jsonify({"error": {"message": str(e)}}), 500
 
 
