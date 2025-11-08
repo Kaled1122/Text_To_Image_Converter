@@ -7,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
   <style>
     body {
-      background-color: #f5f5f7;
+      background: linear-gradient(180deg, #f9f9fa 0%, #f2f2f5 100%);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
       color: #1d1d1f;
       display: flex;
@@ -22,29 +22,29 @@
       font-size: 3.25rem;
       font-weight: 600;
       letter-spacing: -0.5px;
-      margin-bottom: 2.75rem;
+      margin-bottom: 3rem;
       text-align: center;
     }
 
     .box {
       background: white;
       border-radius: 26px;
-      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.06);
-      padding: 3.5rem 2.5rem;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.06);
+      padding: 3.5rem 3rem;
       width: 100%;
-      max-width: 650px;
+      max-width: 640px;
       text-align: center;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .box:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 60px rgba(0, 0, 0, 0.08);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 90px rgba(0, 0, 0, 0.08);
     }
 
     p {
       color: #515154;
-      margin-bottom: 2.25rem;
+      margin-bottom: 2.5rem;
       font-size: 1.1rem;
     }
 
@@ -86,7 +86,6 @@
       box-shadow: 0 8px 26px rgba(0, 113, 227, 0.35);
     }
 
-    /* spinner */
     .spinner {
       width: 34px;
       height: 34px;
@@ -108,8 +107,57 @@
       to { transform: rotate(360deg); }
     }
 
+    /* Modal for friendly errors */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      max-width: 500px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #1d1d1f;
+    }
+
+    .modal-content p {
+      color: #515154;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .close-btn {
+      background: #0071e3;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     footer {
-      margin-top: 2.5rem;
+      margin-top: 3rem;
       font-size: 0.9rem;
       color: #777;
       text-align: center;
@@ -132,12 +180,21 @@
     </div>
 
     <div id="output" class="hidden mt-8">
-      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
+      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500 opacity-0" alt="Generated image" />
       <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
     </div>
   </div>
 
   <footer>Made by <strong>Kaled Alenezi</strong></footer>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <h2>⚠️ Error</h2>
+      <p id="errorMessage">An unknown error occurred.</p>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
 
   <script>
     const BACKEND_URL = "https://texttoimageconverter-production.up.railway.app";
@@ -145,16 +202,25 @@
     const promptInput = document.getElementById("prompt");
     const loading = document.getElementById("loading");
     const spinner = document.getElementById("spinner");
-    const loadingText = document.getElementById("loadingText");
     const output = document.getElementById("output");
     const img = document.getElementById("image");
     const download = document.getElementById("download");
+    const modal = document.getElementById("errorModal");
+    const errorMessage = document.getElementById("errorMessage");
+
+    function showModal(message) {
+      errorMessage.textContent = message;
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+    }
 
     btn.addEventListener("click", async () => {
       const prompt = promptInput.value.trim();
-      if (!prompt) return alert("Please enter a prompt!");
-      
-      // Show spinner animation
+      if (!prompt) return showModal("Please enter a description before generating.");
+
       loading.classList.remove("hidden");
       spinner.classList.add("show");
       output.classList.add("hidden");
@@ -165,28 +231,25 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt }),
         });
-
         const data = await res.json();
 
         if (data.image_url) {
           img.src = data.image_url;
+          img.onload = () => img.classList.add("opacity-100");
           download.href = data.image_url;
           download.textContent = "Download Image";
-          
-          // Hide spinner with smooth fade
           spinner.classList.remove("show");
-          setTimeout(() => loading.classList.add("hidden"), 300);
-          
+          loading.classList.add("hidden");
           output.classList.remove("hidden");
         } else {
           spinner.classList.remove("show");
-          setTimeout(() => loading.classList.add("hidden"), 300);
-          alert("Error: " + (data.error || "Failed to generate image"));
+          loading.classList.add("hidden");
+          showModal(data.error?.message || "Failed to generate image.");
         }
       } catch (err) {
         spinner.classList.remove("show");
-        setTimeout(() => loading.classList.add("hidden"), 300);
-        alert("Request failed: " + err.message);
+        loading.classList.add("hidden");
+        showModal("Error: " + err.message);
       }
     });
   </script>
