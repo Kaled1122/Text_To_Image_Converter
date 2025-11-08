@@ -3,33 +3,44 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from openai import OpenAI
 
+# ---------------------------------------------------------
+# SETUP
+# ---------------------------------------------------------
 app = Flask(__name__)
 CORS(app)
 
+# Use your real API key
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# ---------------------------------------------------------
+# ROUTES
+# ---------------------------------------------------------
 @app.route("/")
 def home():
-    return jsonify({"status": "✅ Backend running"})
+    return jsonify({"message": "✅ Text2Image Studio backend is running."})
 
 @app.route("/generate", methods=["POST"])
-def generate():
-    data = request.get_json()
-    prompt = data.get("prompt", "").strip()
-
-    if not prompt:
-        return jsonify({"error": "No prompt provided"}), 400
-
+def generate_image():
     try:
+        data = request.get_json()
+        prompt = data.get("prompt", "").strip()
+
+        if not prompt:
+            return jsonify({"error": {"message": "No prompt provided."}}), 400
+
+        # Generate image
         result = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
             size="1024x1024"
         )
-        return jsonify({"image_url": result.data[0].url})
+
+        image_url = result.data[0].url
+        return jsonify({"image_url": image_url})
+
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": {"message": str(e)}}), 500
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
