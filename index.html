@@ -15,50 +15,56 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 3rem 1rem;
+      padding: 4rem 1rem;
     }
 
     h1 {
-      font-size: 3rem;
+      font-size: 3.25rem;
       font-weight: 600;
       letter-spacing: -0.5px;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2.75rem;
       text-align: center;
     }
 
     .box {
       background: white;
-      border-radius: 22px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-      padding: 3rem 2.5rem;
+      border-radius: 26px;
+      box-shadow: 0 10px 50px rgba(0, 0, 0, 0.06);
+      padding: 3.5rem 2.5rem;
       width: 100%;
-      max-width: 620px;
+      max-width: 650px;
       text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 60px rgba(0, 0, 0, 0.08);
     }
 
     p {
       color: #515154;
-      margin-bottom: 2rem;
+      margin-bottom: 2.25rem;
       font-size: 1.1rem;
     }
 
     textarea {
       width: 100%;
       border: 1px solid #d2d2d7;
-      border-radius: 12px;
+      border-radius: 14px;
       resize: none;
       font-size: 1rem;
-      padding: 1rem;
+      padding: 1rem 1.25rem;
       background: #fafafa;
       color: #1d1d1f;
       outline: none;
-      margin-bottom: 1.75rem;
-      transition: border 0.2s ease;
+      margin-bottom: 2rem;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
     }
 
     textarea:focus {
       border-color: #0071e3;
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
     }
 
     button {
@@ -66,8 +72,8 @@
       color: white;
       font-weight: 500;
       border: none;
-      border-radius: 12px;
-      padding: 0.9rem 1.5rem;
+      border-radius: 14px;
+      padding: 1rem 1.5rem;
       cursor: pointer;
       width: 100%;
       font-size: 1.1rem;
@@ -76,19 +82,26 @@
     }
 
     button:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 24px rgba(0, 113, 227, 0.35);
+      transform: scale(1.02);
+      box-shadow: 0 8px 26px rgba(0, 113, 227, 0.35);
     }
 
+    /* spinner */
     .spinner {
-      display: inline-block;
-      width: 28px;
-      height: 28px;
-      border: 3px solid rgba(0, 113, 227, 0.3);
+      width: 34px;
+      height: 34px;
+      border: 3px solid rgba(0, 113, 227, 0.25);
       border-top-color: #0071e3;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .spinner.show {
+      opacity: 1;
+      transform: scale(1);
     }
 
     @keyframes spin {
@@ -113,9 +126,9 @@
     <textarea id="prompt" rows="3" placeholder="Describe your image idea..."></textarea>
     <button id="generateBtn">Generate Image</button>
 
-    <div id="loading" class="hidden mt-8 text-gray-600 text-lg">
-      <div class="spinner mx-auto mb-3"></div>
-      <p>Generating your image...</p>
+    <div id="loading" class="hidden mt-8 text-gray-600 text-lg flex flex-col items-center justify-center">
+      <div class="spinner mb-3" id="spinner"></div>
+      <p id="loadingText">Generating your image...</p>
     </div>
 
     <div id="output" class="hidden mt-8">
@@ -131,6 +144,8 @@
     const btn = document.getElementById("generateBtn");
     const promptInput = document.getElementById("prompt");
     const loading = document.getElementById("loading");
+    const spinner = document.getElementById("spinner");
+    const loadingText = document.getElementById("loadingText");
     const output = document.getElementById("output");
     const img = document.getElementById("image");
     const download = document.getElementById("download");
@@ -138,7 +153,10 @@
     btn.addEventListener("click", async () => {
       const prompt = promptInput.value.trim();
       if (!prompt) return alert("Please enter a prompt!");
+      
+      // Show spinner animation
       loading.classList.remove("hidden");
+      spinner.classList.add("show");
       output.classList.add("hidden");
 
       try {
@@ -147,20 +165,27 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt }),
         });
+
         const data = await res.json();
 
         if (data.image_url) {
           img.src = data.image_url;
           download.href = data.image_url;
           download.textContent = "Download Image";
-          loading.classList.add("hidden");
+          
+          // Hide spinner with smooth fade
+          spinner.classList.remove("show");
+          setTimeout(() => loading.classList.add("hidden"), 300);
+          
           output.classList.remove("hidden");
         } else {
-          loading.classList.add("hidden");
+          spinner.classList.remove("show");
+          setTimeout(() => loading.classList.add("hidden"), 300);
           alert("Error: " + (data.error || "Failed to generate image"));
         }
       } catch (err) {
-        loading.classList.add("hidden");
+        spinner.classList.remove("show");
+        setTimeout(() => loading.classList.add("hidden"), 300);
         alert("Request failed: " + err.message);
       }
     });
