@@ -15,21 +15,22 @@
       background: var(--apple-gray);
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
       color: #1d1d1f;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
     }
     .mac-window {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(40px);
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(30px);
       border: 1px solid var(--apple-border);
       border-radius: 18px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-      max-width: 700px;
-      width: 100%;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+      max-width: 720px;
+      width: 90%;
       overflow: hidden;
     }
     .mac-topbar {
@@ -50,7 +51,32 @@
     .dot.yellow { background: #ffbd44; }
     .dot.green { background: #00ca4e; }
     .mac-content {
-      padding: 2rem 2.5rem;
+      padding: 2.5rem 3rem;
+    }
+    h1 {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: #515154;
+    }
+    textarea {
+      width: 100%;
+      border: 1px solid var(--apple-border);
+      border-radius: 12px;
+      resize: none;
+      font-size: 1rem;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1d1d1f;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+    textarea:focus {
+      border: 1px solid var(--apple-blue);
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
     }
     .btn-primary {
       background: var(--apple-blue);
@@ -60,25 +86,17 @@
       font-weight: 500;
       transition: all 0.25s ease;
       box-shadow: 0 4px 12px rgba(0, 113, 227, 0.25);
+      width: 100%;
     }
     .btn-primary:hover {
       transform: scale(1.03);
       box-shadow: 0 6px 18px rgba(0, 113, 227, 0.35);
     }
-    textarea {
-      border: 1px solid var(--apple-border);
-      border-radius: 12px;
-      resize: none;
-      font-size: 1rem;
-      padding: 0.75rem 1rem;
-      background: rgba(255, 255, 255, 0.85);
-      color: #1d1d1f;
-      outline: none;
-      transition: border 0.2s ease;
-    }
-    textarea:focus {
-      border: 1px solid var(--apple-blue);
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+    footer {
+      margin-top: 2rem;
+      color: #777;
+      font-size: 0.9rem;
+      text-align: center;
     }
   </style>
 </head>
@@ -92,25 +110,24 @@
     </div>
 
     <div class="mac-content text-center">
-      <h1 class="text-3xl font-semibold mb-2">Text2Image Studio</h1>
-      <p class="text-gray-600 mb-8">Describe. Generate. Visualize — beautifully.</p>
+      <h1 class="text-3xl">Text2Image Studio</h1>
+      <p class="text-gray-600 mb-4">Describe. Generate. Visualize — beautifully.</p>
 
-      <textarea id="prompt" rows="3" class="w-full mb-5" placeholder="Describe your image idea..."></textarea>
+      <textarea id="prompt" rows="3" placeholder="Describe your image idea..."></textarea>
+      <button id="generateBtn" class="btn-primary">Generate Image</button>
 
-      <button id="generateBtn" class="btn-primary w-full mb-6">Generate Image</button>
-
-      <div id="loading" class="hidden text-gray-500 text-lg animate-pulse mb-6">
+      <div id="loading" class="hidden text-gray-500 text-lg animate-pulse mt-6">
         ⏳ Creating your image...
       </div>
 
-      <div id="output" class="hidden">
+      <div id="output" class="hidden mt-6">
         <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
         <a id="download" class="text-blue-600 underline text-lg" target="_blank">Download Image</a>
       </div>
     </div>
   </div>
 
-  <footer class="mt-8 text-gray-500 text-sm text-center">
+  <footer>
     Made by <strong>Kaled Alenezi</strong>
   </footer>
 
@@ -136,7 +153,6 @@
           body: JSON.stringify({ prompt }),
         });
         const data = await res.json();
-
         if (data.image_url) {
           img.src = data.image_url;
           download.href = data.image_url;
