@@ -5,43 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Text2Image Studio</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(180deg, #f5f5f7 0%, #eaeaea 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #007aff, #0051ff);
+      box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 6px 18px rgba(0, 122, 255, 0.4);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
 
-  <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-lg">
-    <h1 class="text-3xl font-bold text-center mb-4 text-gray-800">🖼️ Text2Image Studio</h1>
-    <p class="text-center text-gray-600 mb-6">
-      Turn your text into stunning AI-generated images in seconds.
-    </p>
+<body class="flex flex-col items-center justify-center min-h-screen px-4">
+  <div class="glass p-8 rounded-3xl shadow-xl max-w-2xl w-full text-center">
+    <h1 class="text-4xl font-semibold text-gray-900 mb-3">Text2Image Studio</h1>
+    <p class="text-gray-600 mb-8 text-lg">Transform your words into breathtaking visuals — instantly.</p>
 
-    <textarea id="prompt" 
-              class="w-full border border-gray-300 p-3 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-              rows="3" 
-              placeholder="Describe your image idea..."></textarea>
+    <textarea id="prompt"
+      class="w-full border border-gray-300 rounded-2xl p-4 mb-6 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      rows="3"
+      placeholder="Describe your image idea..."></textarea>
 
-    <button id="generateBtn" 
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-all duration-200">
+    <button id="generateBtn"
+      class="btn-primary text-white font-semibold py-3 px-6 rounded-2xl w-full text-lg">
       Generate Image
     </button>
 
-    <div id="loading" class="hidden mt-4 text-center text-gray-500 animate-pulse">
-      ⏳ Generating your image...
+    <div id="loading" class="hidden mt-6 text-gray-500 animate-pulse text-lg">
+      ⏳ Crafting your masterpiece...
     </div>
 
-    <div id="output" class="mt-6 hidden text-center">
-      <img id="image" class="rounded-xl mx-auto shadow-lg mb-4 max-w-full" alt="Generated image" />
-      <a id="download" class="text-blue-600 underline block mt-2" target="_blank">Download Image</a>
+    <div id="output" class="mt-8 hidden">
+      <img id="image" class="rounded-2xl mx-auto shadow-lg mb-4 max-w-full transition-all duration-500" alt="Generated image" />
+      <a id="download" class="text-blue-600 underline block mt-2 text-lg" target="_blank">Download Image</a>
     </div>
   </div>
 
-  <footer class="mt-10 text-gray-500 text-sm text-center">
-    Powered by OpenAI • Hosted on Vercel & Railway
+  <footer class="mt-10 text-gray-400 text-sm text-center">
+    © 2025 Text2Image Studio · Powered by OpenAI · Hosted on Vercel & Railway<br>
+    <span class="text-gray-500">Made by <strong>Kaled Alenezi</strong></span>
   </footer>
 
   <script>
-    // 👇 Connects to your live backend API on Railway
     const BACKEND_URL = "https://texttoimageconverter-production.up.railway.app";
-
     const btn = document.getElementById("generateBtn");
     const promptInput = document.getElementById("prompt");
     const loading = document.getElementById("loading");
@@ -52,7 +69,6 @@
     btn.addEventListener("click", async () => {
       const prompt = promptInput.value.trim();
       if (!prompt) return alert("Please enter a prompt!");
-      
       loading.classList.remove("hidden");
       output.classList.add("hidden");
 
